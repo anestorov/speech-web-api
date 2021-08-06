@@ -58,6 +58,7 @@ recognition.onresult = function (event) {
 
 recognition.onspeechend = function () {
     recognition.stop();
+    micOFF();
 }
 
 recognition.onnomatch = function (event) {
@@ -70,18 +71,31 @@ recognition.onerror = function (event) {
 
 recognition.onaudioend = function (event) {
     console.warn(event);
+    micOFF();
 }
 
 recognition.onend = function (event) {
     console.warn(event);
+    micOFF();
 }
 recognition.onsoundend = function (event) {
     console.warn(event);
+    micOFF();
 }
 
 mic.addEventListener('click',()=>{
     recognition.start();
+    micON();
+});
+
+function micOFF() {
+    mic.value = "Mic OFF"
+    mic.classList.add('btn-outline-danger');
+    mic.classList.remove('btn-outline-primary');
+}
+function micON() {
+    mic.value = "Mic ON"
     mic.classList.remove('btn-outline-danger');
     mic.classList.add('btn-outline-primary');
-});
+}
     
