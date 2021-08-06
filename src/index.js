@@ -56,9 +56,8 @@ recognition.onresult = function (event) {
     if(!found && pointer) pointer.elm.value = transcript;
 }
 
-recognition.onspeechend = function () {
-    recognition.stop();
-    micOFF();
+recognition.onspeechend = function (event) {
+    console.warn(event);
 }
 
 recognition.onnomatch = function (event) {
@@ -84,18 +83,24 @@ recognition.onsoundend = function (event) {
 }
 
 mic.addEventListener('click',()=>{
-    recognition.start();
-    micON();
+    if(appState) {
+        recognition.stop();
+        micOFF();
+    } else {
+        recognition.start();
+        micON();
+    } 
 });
 
+let appState = false;
 function micOFF() {
-    mic.value = "Mic OFF"
     mic.classList.add('btn-outline-danger');
     mic.classList.remove('btn-outline-primary');
+    appState = false;
 }
 function micON() {
-    mic.value = "Mic ON"
     mic.classList.remove('btn-outline-danger');
     mic.classList.add('btn-outline-primary');
+    appState = true;
 }
     
