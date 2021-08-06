@@ -7,18 +7,18 @@ var speechRecognitionList = new SpeechGrammarList();
 var textarea = document.querySelector('#textarea');
 var mic = document.querySelector('#mic');
 
-var elements = {
-    firstName : {elm:document.querySelector('#firstName'), text:"first name"},
-    lastName : {elm:document.querySelector('#lastName'), text:"last name"},
-    email : {elm:document.querySelector('#email'), text:"email"},
-    password : {elm:document.querySelector('#password'), text:"password"},
-    address : {elm:document.querySelector('#address'), text:"address"},
-    city : {elm:document.querySelector('#city'), text:"city"},
-    state : {elm:document.querySelector('#state'), text:"state"},
-    zip : {elm:document.querySelector('#zip'), text:"zip"},
-}
+var elements = [
+    { elm: document.querySelector('#firstName'), text: "first name" },
+    { elm: document.querySelector('#lastName'), text: "last name" },
+    { elm: document.querySelector('#email'), text: "email" },
+    { elm: document.querySelector('#password'), text: "password" },
+    { elm: document.querySelector('#address'), text: "address" },
+    { elm: document.querySelector('#city'), text: "city" },
+    { elm: document.querySelector('#state'), text: "state" },
+    { elm: document.querySelector('#zip'), text: "zip" },
+];
 var pointer = null
-var grammar = '#JSGF V1.0; grammar terms; public <term> = next|' + Object.values(elements).map(v=>v.text).join('|') + ';'
+var grammar = '#JSGF V1.0; grammar terms; public <term> = previous|next|clear|' + elements.map(v => v.text).join('|') + ';'
 console.log(grammar);
 
 speechRecognitionList.addFromString(grammar, 1);
@@ -34,26 +34,37 @@ recognition.onresult = function (event) {
     console.log(event.results);
     //textarea.value = "";
 
-    for(const v of event.results) {
+    for (const v of event.results) {
         //textarea.value += v[0].transcript+"\r\n";
         transcript = v[0].transcript.trim().toLowerCase();
     }
 
     console.log(transcript);
+
     let found = false;
-    Object.values(elements).forEach(v=>{
-        if(transcript == v.text) {
-            pointer = v;
-            pointer?.elm?.focus();
+    elements.forEach((v,k) => {
+        if (transcript == v.text) {
+            pointer = k;
+            elements[pointer]?.elm?.focus();
             found = true;
         }
     });
 
-    console.log(pointer);
+    if(transcript == 'next') {
+        found = true;
+        pointer++;
+        elements[pointer]?.elm?.focus();
+    }
+    if(transcript == 'previous') {
+        found = true;
+        pointer--;
+        elements[pointer]?.elm?.focus();
+    }
+    if(transcript == 'clear') {
+        transcript = "";
+    }
 
-    //if(transcript == 'next') 
-
-    if(!found && pointer) pointer.elm.value = transcript;
+    if (!found && elements[pointer]) elements[pointer].elm.value = transcript;
 }
 
 recognition.onspeechend = function (event) {
@@ -84,14 +95,14 @@ recognition.onsoundend = function (event) {
 
 var appState = false;
 
-mic.addEventListener('click',()=>{
-    if(appState) {
+mic.addEventListener('click', () => {
+    if (appState) {
         recognition.stop();
         micOFF();
     } else {
         recognition.start();
         micON();
-    } 
+    }
 });
 
 
@@ -105,4 +116,4 @@ function micON() {
     mic.classList.add('btn-outline-primary');
     appState = true;
 }
-    
+
