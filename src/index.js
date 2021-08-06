@@ -82,6 +82,8 @@ recognition.onsoundend = function (event) {
     micOFF();
 }
 
+var appState = false;
+
 mic.addEventListener('click',()=>{
     if(appState) {
         recognition.stop();
@@ -92,7 +94,7 @@ mic.addEventListener('click',()=>{
     } 
 });
 
-let appState = false;
+
 function micOFF() {
     mic.classList.add('btn-outline-danger');
     mic.classList.remove('btn-outline-primary');
